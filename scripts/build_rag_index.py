@@ -6,6 +6,11 @@ from pathlib import Path
 DATA_FILE = Path("data/klexikon_rag_chunks.jsonl")
 
 if __name__ == "__main__":
+    print("📁 Prüfe Datei:", DATA_FILE)
+    if not DATA_FILE.exists():
+        print("❌ Datei nicht gefunden!")
+        exit(1)
+
     chroma = get_chroma_client("klexikon")
     embedder = get_embedder()
 
@@ -14,11 +19,18 @@ if __name__ == "__main__":
         documents = []
         metadatas = []
         ids = []
+        count = 0
         for obj in reader:
             documents.append(obj["text"])
             metadatas.append(obj["metadata"])
             ids.append(obj["metadata"]["id"])
+            count += 1
 
-    print(f"🔢 {len(documents)} Dokumente werden eingefügt...")
+    print(f"🔢 Gelesene Einträge: {count}")
+    if count == 0:
+        print("❌ Keine Daten im JSONL – bitte prüfen.")
+        exit(1)
+
+    print("💾 Füge Daten in ChromaDB ein...")
     chroma.add_texts(documents=documents, metadatas=metadatas, ids=ids, embedding=embedder)
     print("✅ RAG-Datenbank erfolgreich erstellt.")
