@@ -32,5 +32,13 @@ if __name__ == "__main__":
         exit(1)
 
     print("💾 Füge Daten in ChromaDB ein...")
+
     chroma.add(documents=documents, metadatas=metadatas, ids=ids)
     print("✅ RAG-Datenbank erfolgreich erstellt.")
+    # Speicher freigeben
+    del documents
+    del metadatas
+    del ids
+    del embedder
+    import gc
+    gc.collect()
